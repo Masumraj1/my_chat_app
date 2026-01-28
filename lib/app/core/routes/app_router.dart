@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_chat_app/app/core/routes/router_path.dart';
 
-import '../../feature/screens/message_screen/message_screen.dart';
+import '../../feature/screens/message_screen/chat_screen.dart';
 import '../constants/enum.dart';
 import '../extensions/route_path_extension.dart';
+
 
 
 
@@ -12,12 +13,12 @@ class AppRouter {
   AppRouter._();
 
   static final GoRouter initRoute = GoRouter(
-    initialLocation: RoutePath.messageScreen.addBasePath,
+    initialLocation: RoutePath.chatScreen.addBasePath,
     debugLogDiagnostics: true,
     navigatorKey: GlobalKey<NavigatorState>(),
     routes: [
       // Auth Routes
-      _route(RoutePath.messageScreen, const MessageScreen()),
+      _route(RoutePath.chatScreen,  ChatScreen()),
 
     ],
   );
