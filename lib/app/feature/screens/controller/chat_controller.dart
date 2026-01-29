@@ -94,6 +94,8 @@ class ChatNotifier extends AsyncNotifier<List<MessageModel>> {
   }
 
 
+
+  //============AddMessage Method=========
   Future<void> addMessage(String text) async {
     _channel.sink.add(jsonEncode({
       'type': 'message',
