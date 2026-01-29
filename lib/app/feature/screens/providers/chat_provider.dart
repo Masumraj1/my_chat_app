@@ -42,22 +42,55 @@ class ChatNotifier extends AsyncNotifier<List<MessageModel>> {
   }
 
   void _initSocket() {
-    _channel = WebSocketChannel.connect(Uri.parse('ws://$_baseUrl/chat'));
-    _channel.sink.add(jsonEncode({'type': 'join', 'userId': _myUserId}));
+    try {
+      // ===========>> 1. Establish WebSocket Connection <<===========
+      // Connects to the server using the provided Base URL and /chat endpoint
+      _channel = WebSocketChannel.connect(Uri.parse('ws://$_baseUrl/chat'));
+      debugPrint('🌐 Connecting to Server: ws://$_baseUrl/chat');
 
-    _channel.stream.listen((rawData) {
-      final data = jsonDecode(rawData.toString());
-      if (data['type'] == 'new_message') {
-        final newMessage = MessageModel(
-          text: data['message'] ?? '',
-          isMe: data['from'] == _myUserId,
-          time: _formatTime(data['timestamp']),
-        );
-        final previousState = state.value ?? [];
-        state = AsyncData([...previousState, newMessage]);
-      }
-    });
+      // ===========>> 2. Send Join Request <<===========
+      // Immediately notify the server that this specific user has joined the session
+      _channel.sink.add(jsonEncode({
+        'type': 'join',
+        'userId': _myUserId
+      }));
+      debugPrint('👤 Join request sent for User ID: $_myUserId');
+
+      // ===========>> 3. Start Listening to Stream <<===========
+      // Constantly listen for incoming data from the server
+      _channel.stream.listen(
+            (rawData) {
+          final data = jsonDecode(rawData.toString());
+          debugPrint('📩 New data packet received from server');
+
+          // Check if the received data type is a new message
+          if (data['type'] == 'new_message') {
+            final newMessage = MessageModel(
+              text: data['message'] ?? '',
+              isMe: data['from'] == _myUserId,
+              time: _formatTime(data['timestamp']),
+            );
+
+            // Update the UI state by appending the new message to the existing list
+            final previousState = state.value ?? [];
+            state = AsyncData([...previousState, newMessage]);
+          }
+        },
+        onError: (error) {
+          // Triggered if there is a network failure or handshake error
+          debugPrint('❌ Connection Error: $error');
+        },
+        onDone: () {
+          // Triggered when the server closes the connection or the client disconnects
+          debugPrint('🔌 Connection Closed. Please re-check server status.');
+        },
+      );
+    } catch (e) {
+      // Catching any initialization or unexpected runtime errors
+      debugPrint('⚠️ Initialization Error: $e');
+    }
   }
+
 
   Future<void> addMessage(String text) async {
     _channel.sink.add(jsonEncode({
