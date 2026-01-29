@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:my_chat_app/app/core/constants/app_strings.dart';
+import '../../widgets/chat_bubble.dart';
 import '../providers/chat_provider.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
@@ -71,11 +72,17 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               Expanded(
                 child: ListView.builder(
                   controller: _scrollController,
-                  padding: EdgeInsets.all(15.w),
+                  padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 15.h),
                   itemCount: messages.length,
                   itemBuilder: (context, index) {
                     final msg = messages[index];
-                    return _buildMessageBubble(msg);
+                    return ChatBubble(
+                      message: msg.text,
+                      time: msg.time,
+                      isMe: msg.isMe,
+                      // প্রয়োজনে এখান থেকে কালার পরিবর্তন করতে পারবেন
+                      // myBubbleColor: Colors.green,
+                    );
                   },
                 ),
               ),
@@ -92,40 +99,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
   }
 
 
-  //==============BubbleMessage Design============
-  Widget _buildMessageBubble(msg) {
-    bool isMe = msg.isMe;
-    return Align(
-      alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-      child: Padding(
-        padding: EdgeInsets.symmetric(vertical: 5.h),
-        child: Column(
-          crossAxisAlignment: isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
-          children: [
-            Container(
-              constraints: BoxConstraints(maxWidth: 0.75.sw),
-              padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 10.h),
-              decoration: BoxDecoration(
-                color: isMe ? Colors.blueAccent : Colors.grey[200],
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(15.r),
-                  topRight: Radius.circular(15.r),
-                  bottomLeft: isMe ? Radius.circular(15.r) : Radius.circular(0),
-                  bottomRight: isMe ? Radius.circular(0) : Radius.circular(15.r),
-                ),
-              ),
-              child: Text(
-                msg.text,
-                style: TextStyle(color: isMe ? Colors.white : Colors.black87, fontSize: 16.sp),
-              ),
-            ),
-            SizedBox(height: 4.h),
-            Text(msg.time, style: TextStyle(fontSize: 10.sp, color: Colors.grey)),
-          ],
-        ),
-      ),
-    );
-  }
+
 
 
   //==================Type Message Design============
