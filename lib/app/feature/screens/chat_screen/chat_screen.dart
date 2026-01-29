@@ -1,20 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart'; // রিভারপড ইমপোর্ট
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:my_chat_app/app/core/constants/app_colors.dart';
+import 'package:my_chat_app/app/core/constants/app_strings.dart';
 
 import '../providers/chat_provider.dart';
 
-class ChatScreen extends ConsumerStatefulWidget { // ConsumerStatefulWidget ব্যবহার করুন
+class ChatScreen extends ConsumerStatefulWidget {
+  const ChatScreen({super.key});
+
   @override
   _ChatScreenState createState() => _ChatScreenState();
 }
 
-class _ChatScreenState extends ConsumerState<ChatScreen> { // ConsumerState ব্যবহার করুন
+class _ChatScreenState extends ConsumerState<ChatScreen> {
+
   final TextEditingController _controller = TextEditingController();
 
   void _sendMessage() {
     if (_controller.text.trim().isNotEmpty) {
-      // Riverpod-এর প্রোভাইডার কল করে মেসেজ অ্যাড করা
       ref.read(chatProvider.notifier).addMessage(_controller.text);
       _controller.clear();
     }
@@ -22,13 +26,18 @@ class _ChatScreenState extends ConsumerState<ChatScreen> { // ConsumerState ব�
 
   @override
   Widget build(BuildContext context) {
-    // এখানে আমরা মেসেজ লিস্টটি "ওয়াচ" (watch) করছি
     final messages = ref.watch(chatProvider);
-
+    debugPrint("Message============>>${messages.length}");
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F5F5),
+      backgroundColor: AppColors.white,
+
+      //=============AppBar============
       appBar: AppBar(
-        title: Text("Chat Master", style: TextStyle(fontSize: 20.sp)),
+        centerTitle: true,
+        title: Text(
+          AppStrings.chatMaster,
+          style: TextStyle(fontSize: 20.sp, color: AppColors.white),
+        ),
         backgroundColor: Colors.blueAccent,
         toolbarHeight: 60.h,
       ),
@@ -37,7 +46,7 @@ class _ChatScreenState extends ConsumerState<ChatScreen> { // ConsumerState ব�
           Expanded(
             child: ListView.builder(
               padding: EdgeInsets.all(15.w),
-              itemCount: messages.length, // রিভারপড থেকে আসা লিস্ট
+              itemCount: messages.length,
               itemBuilder: (context, index) {
                 return _buildMessageBubble(messages[index]);
               },
@@ -49,12 +58,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> { // ConsumerState ব�
     );
   }
 
-  // বাবল এবং ইনপুট এরিয়া আপনার আগের কোডই থাকবে, শুধু ডাটা আসবে রিভারপড থেকে
   Widget _buildMessageBubble(msg) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 5.h),
       child: Column(
-        crossAxisAlignment: msg.isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        crossAxisAlignment: msg.isMe
+            ? CrossAxisAlignment.end
+            : CrossAxisAlignment.start,
         children: [
           Container(
             constraints: BoxConstraints(maxWidth: 0.75.sw),
@@ -64,17 +74,27 @@ class _ChatScreenState extends ConsumerState<ChatScreen> { // ConsumerState ব�
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(15.r),
                 topRight: Radius.circular(15.r),
-                bottomLeft: msg.isMe ? Radius.circular(15.r) : Radius.circular(0),
-                bottomRight: msg.isMe ? Radius.circular(0) : Radius.circular(15.r),
+                bottomLeft: msg.isMe
+                    ? Radius.circular(15.r)
+                    : Radius.circular(0),
+                bottomRight: msg.isMe
+                    ? Radius.circular(0)
+                    : Radius.circular(15.r),
               ),
             ),
             child: Text(
               msg.text,
-              style: TextStyle(color: msg.isMe ? Colors.white : Colors.black87, fontSize: 16.sp),
+              style: TextStyle(
+                color: msg.isMe ? Colors.white : Colors.black87,
+                fontSize: 16.sp,
+              ),
             ),
           ),
           SizedBox(height: 4.h),
-          Text(msg.time, style: TextStyle(fontSize: 10.sp, color: Colors.grey)),
+          Text(
+            msg.time,
+            style: TextStyle(fontSize: 10.sp, color: Colors.grey),
+          ),
         ],
       ),
     );
@@ -93,15 +113,24 @@ class _ChatScreenState extends ConsumerState<ChatScreen> { // ConsumerState ব�
                 hintText: "মেসেজ লিখুন...",
                 fillColor: const Color(0xFFEEEEEE),
                 filled: true,
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(30.r), borderSide: BorderSide.none),
-                contentPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 10.h),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.r),
+                  borderSide: BorderSide.none,
+                ),
+                contentPadding: EdgeInsets.symmetric(
+                  horizontal: 20.w,
+                  vertical: 10.h,
+                ),
               ),
             ),
           ),
           SizedBox(width: 10.w),
           IconButton(
             onPressed: _sendMessage,
-            icon: CircleAvatar(backgroundColor: Colors.blueAccent, child: Icon(Icons.send, color: Colors.white, size: 20.r)),
+            icon: CircleAvatar(
+              backgroundColor: Colors.blueAccent,
+              child: Icon(Icons.send, color: Colors.white, size: 20.r),
+            ),
           ),
         ],
       ),

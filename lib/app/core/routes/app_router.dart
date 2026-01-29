@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:my_chat_app/app/core/routes/router_path.dart';
-
-import '../../feature/screens/message_screen/chat_screen.dart';
+import '../../feature/screens/chat_screen/chat_screen.dart';
 import '../constants/enum.dart';
 import '../extensions/route_path_extension.dart';
 
@@ -70,7 +69,7 @@ class AppRouter {
         key: state.pageKey,
         child: child,
         transitionDuration: Duration.zero,
-        transitionsBuilder: (_, __, ___, child) => child,
+        transitionsBuilder: (_, _, _, child) => child,
       );
     }
 
