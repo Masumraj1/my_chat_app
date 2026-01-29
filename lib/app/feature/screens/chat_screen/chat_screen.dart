@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:my_chat_app/app/core/constants/app_strings.dart';
 import '../providers/chat_provider.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
@@ -21,9 +22,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     super.dispose();
   }
 
-  // একদম নিচে স্ক্রল করার লজিক
+
   void _scrollToBottom() {
-    // WidgetsBinding ব্যবহার করা হয়েছে যেন ফ্রেম রেন্ডার হওয়ার পর স্ক্রল হয়
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (_scrollController.hasClients) {
         _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
@@ -31,18 +31,19 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     });
   }
 
+
+  //===============SendMessage Method========
   void _sendMessage() {
     if (_controller.text.trim().isNotEmpty) {
       ref.read(chatProvider.notifier).addMessage(_controller.text);
       _controller.clear();
-      // নিজের মেসেজ পাঠানোর সাথে সাথে নিচে স্ক্রল
       _scrollToBottom();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    // রিভারপড স্টেট লিসেনার: নতুন কোনো মেসেজ যোগ হলেই অটো স্ক্রল হবে
+
     ref.listen(chatProvider, (previous, next) {
       _scrollToBottom();
     });
@@ -51,21 +52,25 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
 
     return Scaffold(
       backgroundColor: Colors.white,
+
+      //===========Appbar==========
       appBar: AppBar(
         centerTitle: true,
-        title: Text("Chat Master", style: TextStyle(fontSize: 20.sp, color: Colors.white)),
+        title: Text(AppStrings.chatMaster, style: TextStyle(fontSize: 20.sp, color: Colors.white)),
         backgroundColor: Colors.blueAccent,
       ),
       body: chatAsync.when(
         data: (messages) {
-          // হিস্টোরি লোড হওয়ার পর প্রথমবার নিচে যাওয়ার জন্য
+
           if (messages.isNotEmpty) _scrollToBottom();
 
           return Column(
             children: [
+
+              //=============Message List===========
               Expanded(
                 child: ListView.builder(
-                  controller: _scrollController, // কন্ট্রোলার যুক্ত করা হয়েছে
+                  controller: _scrollController,
                   padding: EdgeInsets.all(15.w),
                   itemCount: messages.length,
                   itemBuilder: (context, index) {
@@ -74,6 +79,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                   },
                 ),
               ),
+
+              //==============Message Input Field=========
               _buildInputArea(),
             ],
           );
@@ -84,6 +91,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     );
   }
 
+
+  //==============BubbleMessage Design============
   Widget _buildMessageBubble(msg) {
     bool isMe = msg.isMe;
     return Align(
@@ -118,6 +127,8 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     );
   }
 
+
+  //==================Type Message Design============
   Widget _buildInputArea() {
     return Container(
       padding: EdgeInsets.all(10.w),
