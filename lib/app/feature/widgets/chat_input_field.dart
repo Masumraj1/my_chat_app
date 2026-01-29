@@ -32,7 +32,7 @@ class ChatInputField extends StatelessWidget {
       ),
       child: Row(
         children: [
-          // টেক্সট ফিল্ড এরিয়া
+          // ================Text Filed ============
           Expanded(
             child: TextField(
               controller: controller,
@@ -51,7 +51,7 @@ class ChatInputField extends StatelessWidget {
             ),
           ),
           SizedBox(width: 8.w),
-          // সেন্ড বাটন
+          // ================Send Button -============
           GestureDetector(
             onTap: onSend,
             child: CircleAvatar(

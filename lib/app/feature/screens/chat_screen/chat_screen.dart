@@ -81,7 +81,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
                       message: msg.text,
                       time: msg.time,
                       isMe: msg.isMe,
-                      // প্রয়োজনে এখান থেকে কালার পরিবর্তন করতে পারবেন
                       // myBubbleColor: Colors.green,
                     );
                   },
@@ -93,7 +92,6 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               ChatInputField(
                 controller: _controller,
                 onSend: _sendMessage,
-                // চাইলে কাস্টম হিন্ট দিতে পারেন
                 // hintText: "Write a message...",
               ),
             ],

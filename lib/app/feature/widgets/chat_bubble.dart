@@ -39,7 +39,6 @@ class ChatBubble extends StatelessWidget {
                   bottomLeft: isMe ? Radius.circular(16.r) : Radius.circular(0),
                   bottomRight: isMe ? Radius.circular(0) : Radius.circular(16.r),
                 ),
-                // হালকা শ্যাডো দিলে প্রিমিয়াম লুক আসে
                 boxShadow: [
                   BoxShadow(
                     color: Colors.black.withValues(alpha: 0.05),
