@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:http/http.dart' as http;
+import '../../../core/utils/date_formater.dart';
 import '../models/message_model.dart';
 
 final chatProvider = AsyncNotifierProvider<ChatNotifier, List<MessageModel>>(() {
@@ -32,7 +33,7 @@ class ChatNotifier extends AsyncNotifier<List<MessageModel>> {
         return data.map((msg) => MessageModel(
           text: msg['message'] ?? '',
           isMe: msg['from'] == _myUserId,
-          time: _formatTime(msg['timestamp']),
+          time: formatTime(msg['timestamp']),
         )).toList();
       }
     } catch (e) {
@@ -41,12 +42,14 @@ class ChatNotifier extends AsyncNotifier<List<MessageModel>> {
     return [];
   }
 
+
+  //=======================Init Socket ================
   void _initSocket() {
     try {
       // ===========>> 1. Establish WebSocket Connection <<===========
       // Connects to the server using the provided Base URL and /chat endpoint
       _channel = WebSocketChannel.connect(Uri.parse('ws://$_baseUrl/chat'));
-      debugPrint('🌐 Connecting to Server: ws://$_baseUrl/chat');
+      debugPrint(' ✅✅✅ [SOCKET CONNECTED] ✅✅✅Connecting to Server: ws://$_baseUrl/chat');
 
       // ===========>> 2. Send Join Request <<===========
       // Immediately notify the server that this specific user has joined the session
@@ -68,7 +71,7 @@ class ChatNotifier extends AsyncNotifier<List<MessageModel>> {
             final newMessage = MessageModel(
               text: data['message'] ?? '',
               isMe: data['from'] == _myUserId,
-              time: _formatTime(data['timestamp']),
+              time: formatTime(data['timestamp']),
             );
 
             // Update the UI state by appending the new message to the existing list
@@ -101,13 +104,5 @@ class ChatNotifier extends AsyncNotifier<List<MessageModel>> {
     }));
   }
 
-  String _formatTime(dynamic timestamp) {
-    if (timestamp == null) return "${DateTime.now().hour}:${DateTime.now().minute}";
-    try {
-      final date = DateTime.parse(timestamp.toString());
-      return "${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}";
-    } catch (e) {
-      return "${DateTime.now().hour}:${DateTime.now().minute}";
-    }
-  }
+
 }
