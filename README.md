@@ -9,3 +9,5 @@
 7. Typing Indicator:
 8. Scroll to Bottom
 9. Sticky Header:
+
+10. 
