@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:my_chat_app/app/core/constants/app_strings.dart';
 import '../../widgets/chat_bubble.dart';
+import '../../widgets/chat_input_field.dart';
 import '../providers/chat_provider.dart';
 
 class ChatScreen extends ConsumerStatefulWidget {
@@ -88,7 +89,13 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
               ),
 
               //==============Message Input Field=========
-              _buildInputArea(),
+
+              ChatInputField(
+                controller: _controller,
+                onSend: _sendMessage,
+                // চাইলে কাস্টম হিন্ট দিতে পারেন
+                // hintText: "Write a message...",
+              ),
             ],
           );
         },
@@ -98,34 +105,4 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
     );
   }
 
-
-
-
-
-  //==================Type Message Design============
-  Widget _buildInputArea() {
-    return Container(
-      padding: EdgeInsets.all(10.w),
-      decoration: BoxDecoration(color: Colors.white, border: Border(top: BorderSide(color: Colors.grey[300]!))),
-      child: Row(
-        children: [
-          Expanded(
-            child: TextField(
-              controller: _controller,
-              decoration: InputDecoration(
-                hintText: "মেসেজ লিখুন...",
-                filled: true,
-                fillColor: Colors.grey[100],
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(30.r), borderSide: BorderSide.none),
-              ),
-            ),
-          ),
-          IconButton(
-            onPressed: _sendMessage,
-            icon: CircleAvatar(backgroundColor: Colors.blueAccent, child: Icon(Icons.send, color: Colors.white)),
-          ),
-        ],
-      ),
-    );
-  }
 }
