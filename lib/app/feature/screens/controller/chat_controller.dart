@@ -24,9 +24,28 @@ class ChatNotifier extends AsyncNotifier<List<MessageModel>> {
 
 
   //==============Message History Method(Get)=============
+  // Future<List<MessageModel>> _fetchHistory() async {
+  //   try {
+  //     final response = await http.get(Uri.parse('http://$_baseUrl/messages/history'));
+  //     if (response.statusCode == 200) {
+  //       final List<dynamic> data = jsonDecode(response.body);
+  //       return data.map((msg) => MessageModel(
+  //         text: msg['message'] ?? '',
+  //         isMe: msg['from'] == _myUserId,
+  //         time: formatTime(msg['timestamp']),
+  //       )).toList();
+  //     }
+  //   } catch (e) {
+  //     debugPrint('❌ History Error: $e');
+  //   }
+  //   return [];
+  // }
   Future<List<MessageModel>> _fetchHistory() async {
     try {
-      final response = await http.get(Uri.parse('http://$_baseUrl/messages/history'));
+      final response = await http
+          .get(Uri.parse('http://$_baseUrl/messages/history'))
+          .timeout(const Duration(seconds: 2));
+
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
         return data.map((msg) => MessageModel(
@@ -34,13 +53,14 @@ class ChatNotifier extends AsyncNotifier<List<MessageModel>> {
           isMe: msg['from'] == _myUserId,
           time: formatTime(msg['timestamp']),
         )).toList();
+      } else {
+        throw "Server Error: ${response.statusCode}";
       }
     } catch (e) {
       debugPrint('❌ History Error: $e');
+      throw "সার্ভারের সাথে সংযোগ বিচ্ছিন্ন";
     }
-    return [];
   }
-
 
   //=======================Init Socket ================
   void _initSocket() {

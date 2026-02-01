@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:my_chat_app/app/core/constants/app_colors.dart';
 import 'package:my_chat_app/app/core/constants/app_strings.dart';
 import '../../widgets/chat_bubble.dart';
 import '../../widgets/chat_input_field.dart';
@@ -98,7 +99,27 @@ class _ChatScreenState extends ConsumerState<ChatScreen> {
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, stackTrace) => Center(child: Text("Error: $error")),
+        error: (error, stackTrace) => Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.wifi_off, size: 50.sp, color: Colors.red),
+              SizedBox(height: 10.h),
+              Text("সার্ভারের সাথে কানেক্ট করা যাচ্ছে না"),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blueAccent, // বাটনের ব্যাকগ্রাউন্ড কালার
+                  foregroundColor: Colors.white,      // টেক্সট এবং আইকনের কালার
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.r), // কর্নার রাউন্ড করার জন্য
+                  ),
+                ),                onPressed: () => ref.invalidate(chatProvider), // আবার চেষ্টা করার জন্য
+                child: const Text("Retry"),
+              )
+            ],
+          ),
+        ),
+        // error: (error, stackTrace) => Center(child: Text("Error: $error")),
       ),
     );
   }
